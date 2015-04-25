@@ -1,0 +1,17 @@
+﻿<Window x:Class="NexStarRemote.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:nsr="clr-namespace:NexStarRemote.Controls"
+        Title="NexStar Remote" Height="520" Width="380">
+    <StackPanel>
+        <GroupBox x:Name="StatusGroupBox" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <GroupBox.Header>Status and Config</GroupBox.Header>
+            <StackPanel>
+                <Label x:Name="StatusLabel" Content="Not Connected" />
+                <ComboBox x:Name="PortComboBox" SelectionChanged="PortComboBox_SelectionChanged" IsEnabled="False" />
+            </StackPanel>
+        </GroupBox>
+        <nsr:SlewControls x:Name="SlewControler" IsEnabled="False" />
+        <nsr:TelescopeInformationControl x:Name="InfoControl" Height="150" />
+    </StackPanel>
+</Window>

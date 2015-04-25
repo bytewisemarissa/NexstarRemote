@@ -1,0 +1,59 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="NexStarRemote.Controls.SlewControls" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Image x:Key="UnconnectedButtonUp" Source="../Media/UnconnectedButton.png" Height="80" Width="80" />
+        <Image x:Key="UnconnectedButtonDown" Source="../Media/UnconnectedButton.png" Height="80" Width="80" />
+        <Image x:Key="UnconnectedButtonLeft" Source="../Media/UnconnectedButton.png" Height="80" Width="80" />
+        <Image x:Key="UnconnectedButtonRight" Source="../Media/UnconnectedButton.png" Height="80" Width="80" />
+
+        <Image x:Key="ConnectedButtonUp" Source="../Media/ConnectedButton.png" Height="80" Width="80" />
+        <Image x:Key="ConnectedButtonDown" Source="../Media/ConnectedButton.png" Height="80" Width="80" />
+        <Image x:Key="ConnectedButtonLeft" Source="../Media/ConnectedButton.png" Height="80" Width="80" />
+        <Image x:Key="ConnectedButtonRight" Source="../Media/ConnectedButton.png" Height="80" Width="80" />
+
+        <Image x:Key="ActiveButton" Source="../Media/ActiveButton.png" Height="80" Width="80" />
+    </UserControl.Resources>
+    <GroupBox x:Name="ControlGroupBox" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <GroupBox.Header>Direction Controls</GroupBox.Header>
+        <Grid  Width="240" Height="240" >
+            <Button x:Name="UpButton" Margin="0,0,0,120" Content="{DynamicResource UnconnectedButtonUp}" BorderThickness="0" Background="White" Width="85" Height="85" IsEnabled="False" >
+                <Button.LayoutTransform>
+                    <RotateTransform Angle="-45" />
+                </Button.LayoutTransform>
+            </Button>
+            <Button x:Name="DownButton" Margin="0,120,0,0" Content="{DynamicResource UnconnectedButtonDown}" BorderThickness="0" Background="White" Width="85" Height="85" IsEnabled="False" >
+                <Button.LayoutTransform>
+                    <RotateTransform Angle="135" />
+                </Button.LayoutTransform>
+            </Button>
+            <Button x:Name="LeftButton" Margin="0,0,120,0" Content="{DynamicResource UnconnectedButtonLeft}" BorderThickness="0" Background="White" Width="85" Height="85" IsEnabled="False" >
+                <Button.LayoutTransform>
+                    <RotateTransform Angle="-135" />
+                </Button.LayoutTransform>
+            </Button>
+            <Button x:Name="RightButton" Margin="120,0,0,0" Content="{DynamicResource UnconnectedButtonRight}" BorderThickness="0" Background="White" Width="85" Height="85" IsEnabled="False" >
+                <Button.LayoutTransform>
+                    <RotateTransform Angle="45" />
+                </Button.LayoutTransform>
+            </Button>
+            <Label Content="Slew Speed :"  VerticalAlignment="Bottom" Margin="-55,0,0,0" HorizontalAlignment="Center"/>
+            <ComboBox x:Name="SlewSpeedComboBox" Height="20" Width="35" Margin="55,0,0,2" VerticalAlignment="Bottom" HorizontalAlignment="Center" SelectedIndex="8" IsEnabled="False">
+                <System:Int32>1</System:Int32>
+                <System:Int32>2</System:Int32>
+                <System:Int32>3</System:Int32>
+                <System:Int32>4</System:Int32>
+                <System:Int32>5</System:Int32>
+                <System:Int32>6</System:Int32>
+                <System:Int32>7</System:Int32>
+                <System:Int32>8</System:Int32>
+                <System:Int32>9</System:Int32>
+            </ComboBox>
+        </Grid>
+    </GroupBox>
+</UserControl>

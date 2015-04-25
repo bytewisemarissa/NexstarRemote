@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="NexStarRemote.Controls.TelescopeInformationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" d:DesignHeight="200" >
+   <GroupBox>
+       <GroupBox.Header>Telescope Information</GroupBox.Header>
+        <DockPanel>
+            <Button x:Name="RefreshButton" Content="Refresh" Click="RefreshButton_Click" Height="20" VerticalAlignment="Bottom" DockPanel.Dock="Top" />
+            <ListBox x:Name="InfoListBox" ScrollViewer.VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" DockPanel.Dock="Top" />
+                
+        </DockPanel>
+    </GroupBox>
+    
+</UserControl>

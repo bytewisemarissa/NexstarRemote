@@ -54,18 +54,40 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\LocationControl.xaml.cs">
+      <DependentUpon>LocationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TelescopeInformationControl.xaml.cs">
       <DependentUpon>TelescopeInformationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TrackingControl.xaml.cs">
+      <DependentUpon>TrackingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InfoWindow.xaml.cs">
+      <DependentUpon>InfoWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SerialSupport\GPSStruct.cs" />
     <Compile Include="SerialSupport\SlewDirection.cs" />
     <Compile Include="SerialSupport\SlewRate.cs" />
     <Compile Include="SerialSupport\TelescopeDevices.cs" />
     <Compile Include="SerialSupport\TrackingMode.cs" />
+    <Page Include="Controls\LocationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\SlewControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\TelescopeInformationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TrackingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InfoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -114,7 +136,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Media\ZoomNeutral_16xlG.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Media\ActiveButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

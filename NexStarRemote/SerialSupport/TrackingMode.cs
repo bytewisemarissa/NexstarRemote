@@ -21,16 +21,6 @@ namespace NexStarRemote.SerialSupport
             Description = description;
         }
 
-        public static Dictionary<int, string> GetTrackingModeDictionary()
-        {
-            return new Dictionary<int, string>(){
-                {Off.Identifier,Off.Description},
-                {AltAz.Identifier,AltAz.Description},
-                {EQNorth.Identifier,EQNorth.Description},
-                {EQSouth.Identifier,EQSouth.Description}
-            };
-        }
-
         public static TrackingMode GetTrackingMode(int modeId)
         {
             switch (modeId)
@@ -46,6 +36,17 @@ namespace NexStarRemote.SerialSupport
                 default:
                     return TrackingMode.Off;
             }
+        }
+
+        public static List<TrackingMode> GetTrackingModes()
+        {
+            return new List<TrackingMode>()
+            {
+                Off,
+                AltAz,
+                EQNorth,
+                EQSouth
+            };
         }
     }
 }

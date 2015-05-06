@@ -106,33 +106,58 @@ namespace NexStarRemote
             Console.SetError(TextWriter.Null);
         }
 
+        public static void Write(string value)
+        {
+            if (HasConsole)
+            {
+                Console.Write(value);
+            }
+        }
+
+        public static void WriteLine(string value)
+        {
+            if (HasConsole)
+            {
+                Console.WriteLine(value);
+            }
+        }
+
         public static void WriteColor(string value, ConsoleColor color)
         {
-            ConsoleColor oldColor = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.Write(value);
-            Console.ForegroundColor = oldColor;
+            if (HasConsole)
+            {
+                ConsoleColor oldColor = Console.ForegroundColor;
+                Console.ForegroundColor = color;
+                Console.Write(value);
+                Console.ForegroundColor = oldColor;
+            }
         }
 
         public static void WriteLineColor(string value, ConsoleColor color)
         {
-            ConsoleColor oldColor = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.WriteLine(value);
-            Console.ForegroundColor = oldColor;
+            if (HasConsole)
+            {
+                ConsoleColor oldColor = Console.ForegroundColor;
+                Console.ForegroundColor = color;
+                Console.WriteLine(value);
+                Console.ForegroundColor = oldColor;
+            }
         }
 
         public static void WriteException(Exception ex)
         {
-            ConsoleColor oldColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine();
-            Console.WriteLine(_bumper);
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            Console.WriteLine(_bumper);
-            Console.WriteLine();
-            Console.ForegroundColor = oldColor;
+            if (HasConsole)
+            {
+                ConsoleColor oldColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine();
+                Console.WriteLine(_bumper);
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(_bumper);
+                Console.WriteLine();
+                Console.ForegroundColor = oldColor;
+            }
         }
     }
 }

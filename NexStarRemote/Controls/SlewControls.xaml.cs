@@ -26,6 +26,7 @@ namespace NexStarRemote.Controls
         public string CurrentPort { get; set; }
 
         private DependencyPropertyDescriptor upButtonDescriptor, rightButtonDescriptor, leftButtonDescriptor, downButtonDescriptor;
+        private TrackingMode _savedTrackingMode;
 
         private int SlewSpeedSelected
         {
@@ -105,12 +106,16 @@ namespace NexStarRemote.Controls
             if (UpButton.IsPressed)
             {
                 UpButton.Content = Resources["ActiveButton"];
-                SendFixSlewCommand(SlewDirection.Up, SlewRate.FindSlewRate(SlewSpeedSelected));
+                SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
+                DisableTracking(slewPort);
+                SendFixSlewCommand(slewPort, SlewDirection.Up, SlewRate.FindSlewRate(SlewSpeedSelected));
             }
             else
             {
                 UpButton.Content = Resources["ConnectedButtonUp"];
-                SendFixSlewCommand(SlewDirection.Up, SlewRate.Stop);
+                SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
+                SendFixSlewCommand(slewPort, SlewDirection.Up, SlewRate.Stop);
+                EnableTracking(slewPort);
             }
         }
 
@@ -119,12 +124,16 @@ namespace NexStarRemote.Controls
             if (DownButton.IsPressed)
             {
                 DownButton.Content = Resources["ActiveButton"];
-                SendFixSlewCommand(SlewDirection.Down, SlewRate.FindSlewRate(SlewSpeedSelected));
+                SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
+                DisableTracking(slewPort);
+                SendFixSlewCommand(slewPort, SlewDirection.Down, SlewRate.FindSlewRate(SlewSpeedSelected));
             }
             else
             {
                 DownButton.Content = Resources["ConnectedButtonDown"];
-                SendFixSlewCommand(SlewDirection.Down, SlewRate.Stop);
+                SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
+                SendFixSlewCommand(slewPort, SlewDirection.Down, SlewRate.Stop);
+                EnableTracking(slewPort);
             }
         }
 
@@ -133,12 +142,16 @@ namespace NexStarRemote.Controls
             if (LeftButton.IsPressed)
             {
                 LeftButton.Content = Resources["ActiveButton"];
-                SendFixSlewCommand(SlewDirection.Left, SlewRate.FindSlewRate(SlewSpeedSelected));
+                SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
+                DisableTracking(slewPort);
+                SendFixSlewCommand(slewPort, SlewDirection.Left, SlewRate.FindSlewRate(SlewSpeedSelected));
             }
             else
             {
                 LeftButton.Content = Resources["ConnectedButtonLeft"];
-                SendFixSlewCommand(SlewDirection.Left, SlewRate.Stop);
+                SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
+                SendFixSlewCommand(slewPort, SlewDirection.Left, SlewRate.Stop);
+                EnableTracking(slewPort);
             }
         }
 
@@ -147,19 +160,22 @@ namespace NexStarRemote.Controls
             if (RightButton.IsPressed)
             {
                 RightButton.Content = Resources["ActiveButton"];
-                SendFixSlewCommand(SlewDirection.Right, SlewRate.FindSlewRate(SlewSpeedSelected));
+                SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
+                DisableTracking(slewPort);
+                SendFixSlewCommand(slewPort, SlewDirection.Right, SlewRate.FindSlewRate(SlewSpeedSelected));
             }
             else
             {
                 RightButton.Content = Resources["ConnectedButtonRight"];
-                SendFixSlewCommand(SlewDirection.Right, SlewRate.Stop);
+                SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
+                SendFixSlewCommand(slewPort, SlewDirection.Right, SlewRate.Stop);
+                EnableTracking(slewPort);
             }
         }
         #endregion
 
-        private void SendFixSlewCommand(SlewDirection direction, SlewRate rate)
+        private void SendFixSlewCommand(SerialPort slewPort, SlewDirection direction, SlewRate rate)
         {
-            SerialPort slewPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
             if(direction == SlewDirection.Left || direction == SlewDirection.Right)
             {
                 NexStarCommandHelper.SetFixedAZMSlew(slewPort, rate, (direction == SlewDirection.Right) ? true : false);
@@ -168,6 +184,26 @@ namespace NexStarRemote.Controls
             {
                 NexStarCommandHelper.SetFixedDECSlew(slewPort, rate, (direction == SlewDirection.Up) ? true : false);
             }
+        }
+
+        private void EnableTracking(SerialPort nexstarPort)
+        {
+            if (_savedTrackingMode != null)
+            {
+                NexStarCommandHelper.SetTrackingMode(nexstarPort, _savedTrackingMode);
+            }
+            else
+            {
+                NexStarCommandHelper.SetTrackingMode(nexstarPort, TrackingMode.Off);
+            }
+
+            _savedTrackingMode = null;
+        }
+
+        private void DisableTracking(SerialPort nexstarPort)
+        {
+            _savedTrackingMode = NexStarCommandHelper.GetTrackingMode(nexstarPort);
+            NexStarCommandHelper.SetTrackingMode(nexstarPort, TrackingMode.Off);
         }
     }
 }

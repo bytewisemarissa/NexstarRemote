@@ -56,36 +56,5 @@ namespace NexStarRemote.Controls
                 });
             });
         }
-
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshDynamicInformation();
-        }
-
-        private void RefreshDynamicInformation()
-        {
-            Task.Run(() =>
-            {
-                SerialPort infoPort = NexStarCommandHelper.BuildNexStarSerialPort(CurrentPort);
-
-                Dictionary<string, string> infoDict = new Dictionary<string, string>();
-                infoDict.Add("Is Align Complete", NexStarCommandHelper.IsAlignmentComplete(infoPort).ToString());
-                infoDict.Add("Is GOTO Running", NexStarCommandHelper.IsGotoRunning(infoPort).ToString());
-                infoDict.Add("Tracking Mode", NexStarCommandHelper.GetTrackingMode(infoPort).Description);
-
-                InfoListBox.Dispatcher.Invoke(() =>
-                {
-                    for (int i = 0; i < infoDict.Count; i++)
-                    {
-                        InfoListBox.Items.RemoveAt(InfoListBox.Items.Count - 1);
-                    }
-
-                    foreach (KeyValuePair<string, string> dataPoint in infoDict)
-                    {
-                        InfoListBox.Items.Add(String.Format("{0} -> {1}", dataPoint.Key, dataPoint.Value));
-                    }
-                });
-            });
-        }
     }
 }

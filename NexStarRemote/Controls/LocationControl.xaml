@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="NexStarRemote.Controls.LocationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             >
+    <StackPanel>
+        <ToolBar>
+            <Label Content="Current Location:" FontWeight="Bold" />
+            <Label x:Name="GPSLocationLabel" Content="N0°0'0&quot;|W0°0'0&quot;" />
+            <Separator/>
+            <Button x:Name="EditLocationButton" Content="Edit" Click="EditLocationButton_Click" />
+            <Button x:Name="SaveLocationButton" Content="Save" Visibility="Collapsed" Click="SaveLocationButton_Click" />
+            <Button x:Name="CancelLocationButton" Content="Cancel" Visibility="Collapsed" Click="CancelLocationButton_Click" />
+        </ToolBar>
+        <ToolBar x:Name="EditToolbar" Visibility="Collapsed" >
+            <ComboBox x:Name="NSComboBox" Width="28" SelectedIndex="0" >
+                <ComboBoxItem>N</ComboBoxItem>
+                <ComboBoxItem>S</ComboBoxItem>
+            </ComboBox>
+            <TextBox x:Name="DegLatTextbox" Width="30" TextChanged="NumericTextbox_TextChanged" />
+            <Label x:Name="SetLabel1" Content="°" />
+            <TextBox x:Name="MinLatTextbox" Width="30" TextChanged="NumericTextbox_TextChanged" />
+            <Label x:Name="SetLabel2" Content="'" />
+            <TextBox x:Name="SecLatTextbox" Width="30" TextChanged="NumericTextbox_TextChanged" />
+            <Label x:Name="SetLabel3" Content="&quot;" />
+            <ComboBox x:Name="WEComboBox" Width="28" SelectedIndex="0" >
+                <ComboBoxItem>W</ComboBoxItem>
+                <ComboBoxItem>E</ComboBoxItem>
+            </ComboBox>
+            <TextBox x:Name="DegLonTextbox" Width="30" TextChanged="NumericTextbox_TextChanged" />
+            <Label x:Name="SetLabel4" Content="°" />
+            <TextBox x:Name="MinLonTextbox" Width="30" TextChanged="NumericTextbox_TextChanged" />
+            <Label x:Name="SetLabel5" Content="'" />
+            <TextBox x:Name="SecLonTextbox" Width="30" TextChanged="NumericTextbox_TextChanged" />
+            <Label x:Name="SetLabel6" Content="&quot;" />
+        </ToolBar>
+    </StackPanel>
+</UserControl>

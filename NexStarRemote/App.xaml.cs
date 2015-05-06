@@ -14,10 +14,9 @@ namespace NexStarRemote
     public partial class App : Application
     {
         public App()
-        {
+        {           
+#if DEBUG
             ConsoleManager.Show();
-#if !DEBUG
-            ConsoleManager.Hide();
 #endif
         }
     }

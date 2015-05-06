@@ -26,12 +26,15 @@ namespace NexStarRemote
     public partial class MainWindow : Window
     {
         private string _currentPort;
+        private bool _interfaceEnabled;
        
         public MainWindow()
         {
             InitializeComponent();
 
             StatusLabel.Content = "Scaning";
+            StatusProgressBar.IsIndeterminate = true;
+
             Task.Run(() =>
             {
                 string[] portNames = NexStarCommandHelper.FindActiveSerialNexstarDevices();
@@ -55,9 +58,9 @@ namespace NexStarRemote
                         PortComboBox.SelectedIndex = 0;
                     }, System.Windows.Threading.DispatcherPriority.Normal);
                 }
-                PortComboBox.Dispatcher.Invoke(() =>
+                StatusProgressBar.Dispatcher.Invoke(() =>
                 {
-                    PortComboBox.IsEnabled = true;
+                    StatusProgressBar.Visibility = System.Windows.Visibility.Hidden;
                 }, System.Windows.Threading.DispatcherPriority.Normal);
             });
         }
@@ -67,15 +70,40 @@ namespace NexStarRemote
             _currentPort = PortComboBox.SelectedItem as string;
             StatusLabel.Content = String.Format("Connected to {0}", _currentPort);
 
-            if (!SlewControler.IsEnabled)
-            {
-                SlewControler.IsEnabled = true;
-                SlewControler.CurrentPort = _currentPort;
-            }
+            SlewControler.CurrentPort = _currentPort;
+            TrackingControl.CurrentPort = _currentPort;
+            LocationSettings.CurrentPort = _currentPort;
 
-            InfoControl.CurrentPort = _currentPort;
-            InfoControl.RefreshAllInformation();
+            if (!_interfaceEnabled)
+            {
+                EnableRemote();
+                _interfaceEnabled = true;
+            }
         }
 
+        private void InfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            InfoWindow infoWindow = new InfoWindow(_currentPort);
+            infoWindow.ShowDialog();
+        }
+
+
+        private void EnableRemote()
+        {
+            SlewControler.IsEnabled = true;
+            PortComboBox.IsEnabled = true;
+            InfoButton.IsEnabled = true;
+            TrackingControl.IsEnabled = true;
+            LocationSettings.IsEnabled = true;
+        }
+
+        private void DisableRemote()
+        {
+            SlewControler.IsEnabled = false;
+            PortComboBox.IsEnabled = false;
+            InfoButton.IsEnabled = false;
+            TrackingControl.IsEnabled = false;
+            LocationSettings.IsEnabled = false;
+        }
     }
 }

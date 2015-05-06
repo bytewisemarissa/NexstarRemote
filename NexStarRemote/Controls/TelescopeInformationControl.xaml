@@ -7,9 +7,7 @@
    <GroupBox>
        <GroupBox.Header>Telescope Information</GroupBox.Header>
         <DockPanel>
-            <Button x:Name="RefreshButton" Content="Refresh" Click="RefreshButton_Click" Height="20" VerticalAlignment="Bottom" DockPanel.Dock="Top" />
             <ListBox x:Name="InfoListBox" ScrollViewer.VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" DockPanel.Dock="Top" />
-                
         </DockPanel>
     </GroupBox>
     

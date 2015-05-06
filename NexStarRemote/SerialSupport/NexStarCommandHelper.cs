@@ -4,8 +4,6 @@ using System.Configuration;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace NexStarRemote.SerialSupport
 {
@@ -38,6 +36,10 @@ namespace NexStarRemote.SerialSupport
         private static readonly byte[] SetVariableSlewDECCommand = new byte[] { Convert.ToByte('P'), 0x03, 0x11, 0x0, 0x0, 0x0, 0x0, 0x0 };
         private static readonly byte[] SetFixedSlewAZMCommand = new byte[] { Convert.ToByte('P'), 0x02, 0x10, 0x0, 0x0, 0x0, 0x0, 0x0 };
         private static readonly byte[] SetFixedSlewDECCommand = new byte[] { Convert.ToByte('P'), 0x02, 0x11, 0x0, 0x0, 0x0, 0x0, 0x0 };
+        private static readonly byte[] GetLocationCommand = new byte[] { Convert.ToByte('w') };
+        private static readonly byte[] SetLocationCommand = new byte[] { Convert.ToByte('W'), 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+        private static readonly byte[] GetTimeCommand = new byte[] { Convert.ToByte('h') };
+        private static readonly byte[] SetTimeCommand = new byte[] { Convert.ToByte('H'), 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
         #endregion
 
         #region Lookup Dictionaries
@@ -59,34 +61,23 @@ namespace NexStarRemote.SerialSupport
         #region Tracking Commands API Implementation
         public static TrackingMode GetTrackingMode(SerialPort nexStarPort)
         {
-            if (!_synclockCollection.Keys.Contains(nexStarPort.PortName)) _synclockCollection[nexStarPort.PortName] = new object();
-            lock (_synclockCollection[nexStarPort.PortName])
-            {
                 byte[] trackingResponse = SendCommand(nexStarPort, GetTrackingModeCommand);
 
                 Int16 trackingId = Convert.ToInt16(trackingResponse[0]);
                 TrackingMode returnValue = TrackingMode.GetTrackingMode(trackingId);
                 return returnValue;
-            }
         }
 
         public static void SetTrackingMode(SerialPort nexStarPort, TrackingMode mode)
         {
-            if (!_synclockCollection.Keys.Contains(nexStarPort.PortName)) _synclockCollection[nexStarPort.PortName] = new object();
-            lock (_synclockCollection[nexStarPort.PortName])
-            {
                 byte[] formatedCommand = FormatCommand(SetTrackingModeCommand, new byte?[]{ null , mode.Identifier});
                 SendCommand(nexStarPort, formatedCommand);
-            }
         }
         #endregion
 
         #region Slewing Commands API Implementation
         public static void SetVariableAZMSlew(SerialPort nexStarPort, int arcSecPerSec)
         {
-            if (!_synclockCollection.Keys.Contains(nexStarPort.PortName)) _synclockCollection[nexStarPort.PortName] = new object();
-            lock (_synclockCollection[nexStarPort.PortName])
-            {
                 if (arcSecPerSec == 0)
                 {
                     byte[] formatedStopCommand1 = FormatCommand(SetVariableSlewAZMCommand, new byte?[] { null, null, null, VariableSlewPositive, 0x0, 0x0 });
@@ -104,14 +95,11 @@ namespace NexStarRemote.SerialSupport
                     byte[] formatedCommand = FormatCommand(SetVariableSlewAZMCommand, new byte?[] { null, null, null, signValue, highOrderByte, lowOrderByte });
                     SendCommand(nexStarPort, formatedCommand);
                 }
-            }
         }
 
         public static void SetVariableDECSlew(SerialPort nexStarPort, int arcSecPerSec)
         {
-            if (!_synclockCollection.Keys.Contains(nexStarPort.PortName)) _synclockCollection[nexStarPort.PortName] = new object();
-            lock (_synclockCollection[nexStarPort.PortName])
-            {
+            
                 if (arcSecPerSec == 0)
                 {
                     byte[] formatedStopCommand1 = FormatCommand(SetVariableSlewDECCommand, new byte?[] { null, null, null, VariableSlewPositive, 0x0, 0x0 });
@@ -129,31 +117,59 @@ namespace NexStarRemote.SerialSupport
                     byte[] formatedCommand = FormatCommand(SetVariableSlewDECCommand, new byte?[] { null, null, null, signValue, highOrderByte, lowOrderByte });
                     SendCommand(nexStarPort, formatedCommand);
                 }
-            }
         }
 
         public static void SetFixedAZMSlew(SerialPort nexStarPort, SlewRate rate, bool slewPositive)
         {
-            if (!_synclockCollection.Keys.Contains(nexStarPort.PortName)) _synclockCollection[nexStarPort.PortName] = new object();
-            lock (_synclockCollection[nexStarPort.PortName])
-            {
                 byte signValue = slewPositive ? FixedSlewPositive : FixedSlewNegative;
 
                 byte[] formatedCommand = FormatCommand(SetFixedSlewAZMCommand, new byte?[] { null, null, null, signValue, rate.RateValue });
                 SendCommand(nexStarPort, formatedCommand);
-            }
         }
 
         public static void SetFixedDECSlew(SerialPort nexStarPort, SlewRate rate, bool slewPositive)
         {
-            if (!_synclockCollection.Keys.Contains(nexStarPort.PortName)) _synclockCollection[nexStarPort.PortName] = new object();
-            lock (_synclockCollection[nexStarPort.PortName])
-            {
                 byte signValue = slewPositive ? FixedSlewPositive : FixedSlewNegative;
 
                 byte[] formatedCommand = FormatCommand(SetFixedSlewDECCommand, new byte?[] { null, null, null, signValue, rate.RateValue });
                 SendCommand(nexStarPort, formatedCommand);
-            }
+        }
+        #endregion
+
+        #region Time and Location API Implementation
+        public static GPSData GetLocation(SerialPort nexStarPort)
+        {
+            byte[] locationResponse = SendCommand(nexStarPort, GetLocationCommand);
+
+            return new GPSData()
+            {
+                DegreesLatitude = Convert.ToInt16(locationResponse[0]),
+                MinutesLatitude = Convert.ToInt16(locationResponse[1]),
+                SecondsLatitude = Convert.ToInt16(locationResponse[2]),
+                IsNorth = !Convert.ToBoolean(locationResponse[3]),
+                DegreesLongitude = Convert.ToInt16(locationResponse[4]),
+                MinutesLongitude = Convert.ToInt16(locationResponse[5]),
+                SecondsLongitude = Convert.ToInt16(locationResponse[6]),
+                IsWest = Convert.ToBoolean(locationResponse[7])
+            };
+        }
+
+        public static void SetLocation(SerialPort nexStarPort, GPSData data)
+        {
+            byte[] formatedCommand = FormatCommand(SetLocationCommand,
+                new byte?[] { 
+                     null, 
+                     Convert.ToByte(data.DegreesLatitude), 
+                     Convert.ToByte(data.MinutesLatitude), 
+                     Convert.ToByte(data.SecondsLatitude),
+                     Convert.ToByte(!data.IsNorth),
+                     Convert.ToByte(data.DegreesLongitude),
+                     Convert.ToByte(data.MinutesLongitude),
+                     Convert.ToByte(data.SecondsLongitude),
+                     Convert.ToByte(data.IsWest)
+                 });
+            
+             SendCommand(nexStarPort, formatedCommand);
         }
         #endregion
 
@@ -317,7 +333,7 @@ namespace NexStarRemote.SerialSupport
 
         public static string[] FindActiveSerialNexstarDevices()
         {
-            Console.WriteLine("Port scaning...");
+            ConsoleManager.WriteLine("Port scaning...");
             List<string> livePorts = new List<string>();
             string[] portNames = SerialPort.GetPortNames();
             foreach (string portName in portNames)
@@ -331,7 +347,7 @@ namespace NexStarRemote.SerialSupport
                     ConsoleManager.WriteLineColor(String.Format("Found NexStar ver {0}!", response), ConsoleColor.Green);
                 }
             }
-            Console.WriteLine("Port scan finished!");
+            ConsoleManager.WriteLine("Port scan finished!");
 
             return livePorts.ToArray();
         }
@@ -342,46 +358,51 @@ namespace NexStarRemote.SerialSupport
         {
             try
             {
-                if (!nexStarPort.IsOpen)
+                if (!_synclockCollection.Keys.Contains(nexStarPort.PortName)) _synclockCollection[nexStarPort.PortName] = new object();
+                lock (_synclockCollection[nexStarPort.PortName])
                 {
-                    Console.Write(String.Format("Opening port {0} -> ", nexStarPort.PortName));
-                    nexStarPort.Open();
+                    if (!nexStarPort.IsOpen)
+                    {
+                        ConsoleManager.Write(String.Format("Opening port {0} -> ", nexStarPort.PortName));
+                        nexStarPort.Open();
+                    }
+                    ConsoleManager.Write(String.Format("Sending '{0}' -> ", RenderByteArray(commandBytes)));
+                    nexStarPort.Write(commandBytes, 0, commandBytes.Count());
+                    byte[] returnValue = Encoding.UTF8.GetBytes(nexStarPort.ReadTo(StopCharacter));
+                    ConsoleManager.Write(String.Format("Recieved '{0}' -> ", RenderByteArray(returnValue)));
+                    return returnValue;
                 }
-
-                Console.Write(String.Format("Sending '{0}' -> ", RenderByteArray(commandBytes)));
-                nexStarPort.Write(commandBytes, 0, commandBytes.Count());
-                byte[] returnValue = Encoding.UTF8.GetBytes(nexStarPort.ReadTo(StopCharacter));
-                Console.Write(String.Format("Recieved '{0}' -> ", RenderByteArray(returnValue)));
-                return returnValue;
             }
             catch (TimeoutException)
             {
                 if (RetryEnabled)
                 {
-                    Console.Write("Retry -> ");
-                    SendCommand(nexStarPort, commandBytes);
+                    ConsoleManager.Write("Retry -> ");
+                    return SendCommand(nexStarPort, commandBytes);
                 }
 
-                Console.Write("Timeout -> ");
+                ConsoleManager.Write("Timeout -> ");
                 return null;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                if (nexStarPort.IsOpen)
+                {
+                    nexStarPort.Close();
+                }
+
+                ConsoleManager.Write("Auth Error -> ");
+                return SendCommand(nexStarPort, commandBytes);
             }
             finally
             {
                 if (nexStarPort.IsOpen)
                 {
                     nexStarPort.Close();
-                    Console.WriteLine("Connection Closed.");
+                    ConsoleManager.WriteLine("Connection Closed.");
                 }
             }
         }
-
-        //private static void SendSlewComand(SerialPort nexStarPort, byte[] commandBytes)
-        //{
-        //    TrackingMode currentTracking = GetTrackingMode(nexStarPort);
-        //    SetTrackingMode(nexStarPort, TrackingMode.Off);
-        //    SendCommand(nexStarPort, commandBytes);
-        //    SetTrackingMode(nexStarPort, currentTracking);
-        //}
 
         private static string RenderByteArray(byte[] bytes)
         {

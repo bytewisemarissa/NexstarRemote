@@ -171,6 +171,41 @@ namespace NexStarRemote.SerialSupport
             
              SendCommand(nexStarPort, formatedCommand);
         }
+
+        public static TimeStruct GetTime(SerialPort nexStarPort)
+        {
+            byte[] timeResponse = SendCommand(nexStarPort, GetTimeCommand);
+
+            return new TimeStruct()
+            {
+                Hour = Convert.ToInt16(timeResponse[0]),
+                Minutes = Convert.ToInt16(timeResponse[1]),
+                Seconds = Convert.ToInt16(timeResponse[2]),
+                Month = Convert.ToInt16(timeResponse[3]),
+                Day = Convert.ToInt16(timeResponse[4]),
+                YearsSince2000 = Convert.ToInt16(timeResponse[5]),
+                GMTOffset = Convert.ToInt16(timeResponse[6]),
+                IsDaylightSavings = Convert.ToBoolean(timeResponse[7])
+            };
+        }
+
+        public static void SetTime(SerialPort nexStarPort, TimeStruct newTime)
+        {
+            byte[] formatedCommand = FormatCommand(SetTimeCommand, new byte?[]
+            {
+                null,
+                Convert.ToByte(newTime.Hour),
+                Convert.ToByte(newTime.Minutes),
+                Convert.ToByte(newTime.Seconds),
+                Convert.ToByte(newTime.Month),
+                Convert.ToByte(newTime.Day),
+                Convert.ToByte(newTime.YearsSince2000),
+                Convert.ToByte(newTime.GMTOffset),
+                Convert.ToByte(newTime.IsDaylightSavings)
+            });
+
+            SendCommand(nexStarPort, formatedCommand);
+        }
         #endregion
 
         #region Miscellaneous Commands API Implementation
@@ -224,12 +259,17 @@ namespace NexStarRemote.SerialSupport
             }
         }
 
-        public static string Echo(SerialPort nexStarPort, string message)
+        public static string Echo(SerialPort nexStarPort, byte message)
         {
             if (!_synclockCollection.Keys.Contains(nexStarPort.PortName)) _synclockCollection[nexStarPort.PortName] = new object();
             lock (_synclockCollection[nexStarPort.PortName])
             {
-                byte[] modelResponse = SendCommand(nexStarPort, EchoCommand);
+                byte[] sendBytes = new byte[2];
+
+                sendBytes[0] = EchoCommand[0];
+                sendBytes[1] = message;
+                
+                byte[] modelResponse = SendCommand(nexStarPort, sendBytes);
 
                 string echodString = Encoding.Default.GetString(modelResponse);
                 return echodString;
@@ -351,6 +391,11 @@ namespace NexStarRemote.SerialSupport
 
             return livePorts.ToArray();
         }
+
+        public static byte[] SendCommandPassThough(SerialPort nexStarPort, byte[] sendBytes)
+        {
+            return SendCommand(nexStarPort, sendBytes);
+        }
         #endregion
 
         #region Private Supporting Methods
@@ -369,7 +414,10 @@ namespace NexStarRemote.SerialSupport
                     ConsoleManager.Write(String.Format("Sending '{0}' -> ", RenderByteArray(commandBytes)));
                     nexStarPort.Write(commandBytes, 0, commandBytes.Count());
                     byte[] returnValue = Encoding.UTF8.GetBytes(nexStarPort.ReadTo(StopCharacter));
-                    ConsoleManager.Write(String.Format("Recieved '{0}' -> ", RenderByteArray(returnValue)));
+                    byte[] includesReturnTerminator = new byte[returnValue.Length + 1];
+                    System.Buffer.BlockCopy(returnValue, 0, includesReturnTerminator, 0, returnValue.Length);
+                    includesReturnTerminator[includesReturnTerminator.Length - 1] = Convert.ToByte('#');
+                    ConsoleManager.Write(String.Format("Recieved '{0}' -> ", RenderByteArray(includesReturnTerminator)));
                     return returnValue;
                 }
             }
@@ -404,20 +452,28 @@ namespace NexStarRemote.SerialSupport
             }
         }
 
-        private static string RenderByteArray(byte[] bytes)
+        //private static string RenderByteArray(byte[] bytes)
+        //{
+        //    StringBuilder builder = new StringBuilder();
+        //    builder.Append("{ ");
+        //    foreach (byte b in bytes)
+        //    {
+        //        builder.Append(b + ", ");
+        //    }
+        //    if (bytes.Count() > 0)
+        //    {
+        //        builder.Remove(builder.Length - 2, 2);
+        //    }
+        //    builder.Append(" }");
+        //    return builder.ToString();
+        //}
+
+        public static string RenderByteArray(byte[] ba)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("{ ");
-            foreach (byte b in bytes)
-            {
-                builder.Append(b + ", ");
-            }
-            if (bytes.Count() > 0)
-            {
-                builder.Remove(builder.Length - 2, 2);
-            }
-            builder.Append(" }");
-            return builder.ToString();
+            StringBuilder hex = new StringBuilder(ba.Length * 2);
+            foreach (byte b in ba)
+                hex.Append("0x").AppendFormat("{0:x2} ".ToUpper(), b);
+            return hex.ToString();
         }
 
         private static byte[] FormatCommand(byte[] command, params byte?[] args)

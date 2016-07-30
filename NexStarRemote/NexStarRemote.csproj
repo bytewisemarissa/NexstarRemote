@@ -70,6 +70,7 @@
     <Compile Include="SerialSupport\SlewDirection.cs" />
     <Compile Include="SerialSupport\SlewRate.cs" />
     <Compile Include="SerialSupport\TelescopeDevices.cs" />
+    <Compile Include="SerialSupport\TimeStruct.cs" />
     <Compile Include="SerialSupport\TrackingMode.cs" />
     <Page Include="Controls\LocationControl.xaml">
       <SubType>Designer</SubType>

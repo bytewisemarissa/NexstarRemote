@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexStarRemote", "NexStarRemote.csproj", "{4958BBB2-0249-4C23-B9CC-B57A81FC4DFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugApplication", "..\DebugApplication\DebugApplication.csproj", "{4D3BAC8A-8E30-4B0B-B0D3-0018FC80A0B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +17,10 @@ Global
 		{4958BBB2-0249-4C23-B9CC-B57A81FC4DFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4958BBB2-0249-4C23-B9CC-B57A81FC4DFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4958BBB2-0249-4C23-B9CC-B57A81FC4DFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D3BAC8A-8E30-4B0B-B0D3-0018FC80A0B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D3BAC8A-8E30-4B0B-B0D3-0018FC80A0B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D3BAC8A-8E30-4B0B-B0D3-0018FC80A0B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D3BAC8A-8E30-4B0B-B0D3-0018FC80A0B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
